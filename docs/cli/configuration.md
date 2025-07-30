@@ -297,6 +297,11 @@ The CLI automatically loads environment variables from an `.env` file. The loadi
   - Your API key for the Gemini API.
   - **Crucial for operation.** The CLI will not function without it.
   - Set this in your shell profile (e.g., `~/.bashrc`, `~/.zshrc`) or an `.env` file.
+- **`GEMINI_API_BASE_URL`**:
+  - Custom base URL for the Gemini API.
+  - Optional. Allows using proxy servers or alternative API endpoints.
+  - If not set, uses the default Gemini API base URL.
+  - Example: `export GEMINI_API_BASE_URL="https://your-proxy-server.com"`
 - **`GEMINI_MODEL`**:
   - Specifies the default Gemini model to use.
   - Overrides the hardcoded default
