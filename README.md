@@ -1,6 +1,6 @@
 # Gemini CLI
 
-[![Gemini CLI CI](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/google-gemini/gemini-cli/actions/workflows/ci.yml)
+[![Gemini CLI CI](https://github.com/a37836323/gemini-cli/actions/workflows/ci.yml/badge.svg)](https://github.com/a37836323/gemini-cli/actions/workflows/ci.yml)
 
 ![Gemini CLI Screenshot](./docs/assets/gemini-screenshot.png)
 
@@ -27,7 +27,7 @@ You have two options to install Gemini CLI.
 2. **Run the CLI:** Execute the following command in your terminal:
 
    ```bash
-   npx https://github.com/google-gemini/gemini-cli
+   npx https://github.com/a37836323/gemini-cli
    ```
 
    Or install it with:
@@ -108,7 +108,7 @@ gemini
 Or work with an existing project:
 
 ```sh
-git clone https://github.com/google-gemini/gemini-cli
+git clone https://github.com/a37836323/gemini-cli
 cd gemini-cli
 gemini
 > Give me a summary of all of the changes that went in yesterday

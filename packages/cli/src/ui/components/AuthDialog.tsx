@@ -160,7 +160,7 @@ export function AuthDialog({
       <Box marginTop={1}>
         <Text color={Colors.AccentBlue}>
           {
-            'https://github.com/google-gemini/gemini-cli/blob/main/docs/tos-privacy.md'
+            'https://github.com/a37836323/gemini-cli/blob/main/docs/tos-privacy.md'
           }
         </Text>
       </Box>

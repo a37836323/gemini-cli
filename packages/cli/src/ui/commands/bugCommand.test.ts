@@ -60,7 +60,7 @@ describe('bugCommand', () => {
 * **Memory Usage:** 100 MB
 `;
     const expectedUrl =
-      'https://github.com/google-gemini/gemini-cli/issues/new?template=bug_report.yml&title=A%20test%20bug&info=' +
+      'https://github.com/a37836323/gemini-cli/issues/new?template=bug_report.yml&title=A%20test%20bug&info=' +
       encodeURIComponent(expectedInfo);
 
     expect(open).toHaveBeenCalledWith(expectedUrl);

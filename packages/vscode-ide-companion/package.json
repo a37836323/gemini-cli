@@ -7,7 +7,7 @@
   "icon": "assets/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/google-gemini/gemini-cli.git",
+    "url": "https://github.com/a37836323/gemini-cli.git",
     "directory": "packages/vscode-ide-companion"
   },
   "engines": {
