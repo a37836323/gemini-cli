@@ -20,6 +20,8 @@ import {
   LoopDetectedEvent,
   NextSpeakerCheckEvent,
   SlashCommandEvent,
+  MalformedJsonResponseEvent,
+  IdeConnectionEvent,
 } from '../types.js';
 import { EventMetadataKey } from './event-metadata-key.js';
 import { Config } from '../../config/config.js';
@@ -42,6 +44,8 @@ const flash_fallback_event_name = 'flash_fallback';
 const loop_detected_event_name = 'loop_detected';
 const next_speaker_check_event_name = 'next_speaker_check';
 const slash_command_event_name = 'slash_command';
+const malformed_json_response_event_name = 'malformed_json_response';
+const ide_connection_event_name = 'ide_connection';
 
 export interface LogResponse {
   nextRequestWaitMs?: number;
@@ -233,7 +237,11 @@ export class ClearcutLogger {
   }
 
   logStartSessionEvent(event: StartSessionEvent): void {
-    const surface = process.env.SURFACE || 'SURFACE_NOT_SET';
+    const surface =
+      process.env.CLOUD_SHELL === 'true'
+        ? 'CLOUD_SHELL'
+        : process.env.SURFACE || 'SURFACE_NOT_SET';
+
     const data = [
       {
         gemini_cli_key: EventMetadataKey.GEMINI_CLI_START_SESSION_MODEL,
@@ -554,6 +562,33 @@ export class ClearcutLogger {
     }
 
     this.enqueueLogEvent(this.createLogEvent(slash_command_event_name, data));
+    this.flushIfNeeded();
+  }
+
+  logMalformedJsonResponseEvent(event: MalformedJsonResponseEvent): void {
+    const data = [
+      {
+        gemini_cli_key:
+          EventMetadataKey.GEMINI_CLI_MALFORMED_JSON_RESPONSE_MODEL,
+        value: JSON.stringify(event.model),
+      },
+    ];
+
+    this.enqueueLogEvent(
+      this.createLogEvent(malformed_json_response_event_name, data),
+    );
+    this.flushIfNeeded();
+  }
+
+  logIdeConnectionEvent(event: IdeConnectionEvent): void {
+    const data = [
+      {
+        gemini_cli_key: EventMetadataKey.GEMINI_CLI_IDE_CONNECTION_TYPE,
+        value: JSON.stringify(event.connection_type),
+      },
+    ];
+
+    this.enqueueLogEvent(this.createLogEvent(ide_connection_event_name, data));
     this.flushIfNeeded();
   }
 

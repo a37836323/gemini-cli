@@ -16,6 +16,7 @@ import {
   SandboxConfig,
   GeminiClient,
   ideContext,
+  type AuthType,
 } from '@google/gemini-cli-core';
 import { LoadedSettings, SettingsFile, Settings } from '../config/settings.js';
 import process from 'node:process';
@@ -26,6 +27,7 @@ import { Tips } from './components/Tips.js';
 import { checkForUpdates, UpdateObject } from './utils/updateCheck.js';
 import { EventEmitter } from 'events';
 import { updateEventEmitter } from '../utils/updateEventEmitter.js';
+import * as auth from '../config/auth.js';
 
 // Define a more complete mock server config based on actual Config
 interface MockServerConfig {
@@ -83,6 +85,7 @@ interface MockServerConfig {
   getAllGeminiMdFilenames: Mock<() => string[]>;
   getGeminiClient: Mock<() => GeminiClient | undefined>;
   getUserTier: Mock<() => Promise<string | undefined>>;
+  getIdeClient: Mock<() => { getCurrentIde: Mock<() => string | undefined> }>;
 }
 
 // Mock @google/gemini-cli-core and its Config class
@@ -156,6 +159,9 @@ vi.mock('@google/gemini-cli-core', async (importOriginal) => {
         getWorkspaceContext: vi.fn(() => ({
           getDirectories: vi.fn(() => []),
         })),
+        getIdeClient: vi.fn(() => ({
+          getCurrentIde: vi.fn(() => 'vscode'),
+        })),
       };
     });
 
@@ -181,6 +187,7 @@ vi.mock('./hooks/useGeminiStream', () => ({
     submitQuery: vi.fn(),
     initError: null,
     pendingHistoryItems: [],
+    thought: null,
   })),
 }));
 
@@ -230,6 +237,10 @@ vi.mock('./components/Header.js', () => ({
 
 vi.mock('./utils/updateCheck.js', () => ({
   checkForUpdates: vi.fn(),
+}));
+
+vi.mock('../config/auth.js', () => ({
+  validateAuthMethod: vi.fn(),
 }));
 
 const mockedCheckForUpdates = vi.mocked(checkForUpdates);
@@ -1003,6 +1014,52 @@ describe('App UI', () => {
 
       // Total error count should be 1 + 3 + 1 = 5
       expect(lastFrame()).toContain('5 errors');
+    });
+  });
+
+  describe('auth validation', () => {
+    it('should call validateAuthMethod when useExternalAuth is false', async () => {
+      const validateAuthMethodSpy = vi.spyOn(auth, 'validateAuthMethod');
+      mockSettings = createMockSettings({
+        workspace: {
+          selectedAuthType: 'USE_GEMINI' as AuthType,
+          useExternalAuth: false,
+          theme: 'Default',
+        },
+      });
+
+      const { unmount } = render(
+        <App
+          config={mockConfig as unknown as ServerConfig}
+          settings={mockSettings}
+          version={mockVersion}
+        />,
+      );
+      currentUnmount = unmount;
+
+      expect(validateAuthMethodSpy).toHaveBeenCalledWith('USE_GEMINI');
+    });
+
+    it('should NOT call validateAuthMethod when useExternalAuth is true', async () => {
+      const validateAuthMethodSpy = vi.spyOn(auth, 'validateAuthMethod');
+      mockSettings = createMockSettings({
+        workspace: {
+          selectedAuthType: 'USE_GEMINI' as AuthType,
+          useExternalAuth: true,
+          theme: 'Default',
+        },
+      });
+
+      const { unmount } = render(
+        <App
+          config={mockConfig as unknown as ServerConfig}
+          settings={mockSettings}
+          version={mockVersion}
+        />,
+      );
+      currentUnmount = unmount;
+
+      expect(validateAuthMethodSpy).not.toHaveBeenCalled();
     });
   });
 });
